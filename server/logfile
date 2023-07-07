@@ -1,0 +1,23 @@
+{"bor":"test","foo":"test"}
+{"level":"info","time":"2023-07-04T11:47:36.836+0800","msg":"test"}
+{"time":"2023-07-04T11:51:21.835+0800","msg":"test"}
+{"level":"info","time":"2023-07-04T11:52:41.312+0800","msg":"test"}
+{"level":"info","time":1688442804.6798184,"msg":"test"}
+{"level":"info","time":1688442821277.4312,"msg":"test"}
+{"level":"info","time":"2023-07-04 11:54:44","msg":"test"}
+{"level":"info","time":"2023-07-04 11:55:26","msg":"test"}
+{"level":"\u001b[34mINFO\u001b[0m","time":"2023-07-04 11:55:42","msg":"test"}
+{"level":"INFO","time":"2023-07-04 11:55:59","msg":"test"}
+{"level":"INFO","time":"2023-07-04 11:57:50","msg":"test"}
+{"level":"INFO","time":"2023-07-04 11:58:16","msg":"test"}
+{"level":"INFO","time":"2023-07-04 13:11:39","msg":"test"}
+{"level":"INFO","time":"2023-07-04 13:13:45","msg":"test"}
+{"level":"INFO","time":"2023-07-04 13:14:08","msg":"test"}
+{"level":"INFO","time":"2023-07-04 13:17:31","msg":"test"}
+{"level":"INFO","time":"2023-07-04 13:30:33","msg":"test"}
+{"level":"INFO","time":"2023-07-04 13:32:38","msg":"test"}
+{"level":"WARN","time":"2023-07-04 13:32:41","msg":"the port has listen"}
+{"level":"INFO","time":"2023-07-04 13:32:52","msg":"test"}
+{"level":"ERROR","time":"2023-07-04 13:32:54","msg":"the port has listen"}
+{"level":"INFO","time":"2023-07-04 13:33:19","message":"test"}
+{"level":"ERROR","time":"2023-07-04 13:33:20","message":"the port has listen"}
