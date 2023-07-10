@@ -159,6 +159,31 @@ func main() {
 	// 初始化日期服务
 	current = calendar.Init(log)
 
+	// 添加计划任务
+	go func() {
+		// 获取当前时间
+		now := time.Now()
+		// 计算下一个0点的时间
+		next := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
+		if next.Before(now) {
+			next = next.Add(24 * time.Hour)
+		}
+		// 计算需要等待的时间
+		duration := next.Sub(now)
+
+		// 等待需要等待的时间
+		time.Sleep(duration)
+
+		// 创建一个每24小时执行一次的定时器
+		ticker := time.NewTicker(24 * time.Hour)
+		defer ticker.Stop() // 在程序结束时停止定时器
+
+		for range ticker.C {
+			log.Info("开始执行计划任务")
+			current = calendar.Init(log)
+		}
+	}()
+
 	fileServer := http.FileServer(http.Dir("./html"))
 	http.Handle("/", fileServer)
 	http.HandleFunc("/api/add", handleAddPort)
