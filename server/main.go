@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
 	"net/http"
 	"os"
@@ -17,8 +18,10 @@ import (
 )
 
 var (
-	log     *zap.Logger
-	current *calendar.OwnTime
+	log      *zap.Logger
+	current  *calendar.OwnTime
+	interval int
+	port     string
 )
 
 func toolWrite(post string, add int) (string, error) {
@@ -81,17 +84,23 @@ func vacationInterval() (interval, weekday, festival string) {
 		}
 		if _, ok := (*holiday)[index]; ok {
 			for _, v := range (*holiday)[index] {
-				if day < v.StartDay {
+				if current.Month == index {
+					if day < v.StartDay {
+						startDate := current.Year + "-" + current.Month + "-" + current.Day
+						endDate := current.Year + fmt.Sprintf("-%v-%v", index, v.StartDay)
+						return dayInterval(startDate, endDate), weekOfDate[current.Week], v.Festival
+					} else if day <= v.EndDay {
+						return "0", weekOfDate[current.Week], v.Festival
+					}
+				} else {
 					startDate := current.Year + "-" + current.Month + "-" + current.Day
 					endDate := current.Year + fmt.Sprintf("-%v-%v", index, v.StartDay)
 					return dayInterval(startDate, endDate), weekOfDate[current.Week], v.Festival
-				} else if day <= v.EndDay {
-					return "节日快乐", weekOfDate[current.Week], "下一个"
 				}
 			}
 		}
 	}
-	return "365天", weekOfDate[current.Week], "下一个"
+	return "365", weekOfDate[current.Week], "下一个"
 }
 
 func dayInterval(startDate, endDate string) string {
@@ -106,7 +115,7 @@ func dayInterval(startDate, endDate string) string {
 func handleAddPort(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	data, _ := toolRead()
-	if value, err := toolWrite(string(data), 1); err != nil {
+	if value, err := toolWrite(string(data), interval); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		fmt.Fprintln(w, err)
 	} else {
@@ -152,11 +161,17 @@ func handleGetDate(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	// 定义命令行参数
+	flag.StringVar(&port, "port", "5000", "listen port")
+	flag.IntVar(&interval, "interval", 1, "port increase interval")
+	// 解析命令行参数
+	flag.Parse()
+
 	// 初始化日志服务
 	log = logger.Init()
 	defer log.Sync()
 
-	// 初始化日期服务
+	// 每天凌晨初始化日期服务
 	current = calendar.Init(log)
 
 	// 添加计划任务
@@ -171,8 +186,12 @@ func main() {
 		// 计算需要等待的时间
 		duration := next.Sub(now)
 
+		log.Sugar().Infof("距离0点还有: ", duration)
 		// 等待需要等待的时间
 		time.Sleep(duration)
+
+		// 等到0点执行
+		current = calendar.Init(log)
 
 		// 创建一个每24小时执行一次的定时器
 		ticker := time.NewTicker(24 * time.Hour)
@@ -193,7 +212,7 @@ func main() {
 
 	log.Info("Service listening on port 5000")
 	server := &http.Server{
-		Addr: ":5000",
+		Addr: ":" + port,
 	}
 
 	server.ListenAndServe()

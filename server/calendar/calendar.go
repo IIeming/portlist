@@ -17,7 +17,7 @@ type OwnTime struct {
 }
 
 func Init(log *zap.Logger) *OwnTime {
-
+	log.Info("开始获取网络时间")
 	resp, err := http.Get("http://worldtimeapi.org/api/timezone/Asia/Shanghai")
 	if err != nil {
 		log.Sugar().Errorf("获取网络时间失败：%v", err)
